@@ -1,32 +1,29 @@
-// Saves options to chrome.storage
-function save_options() {
-  var color = document.getElementById('color').value;
-  var likesColor = document.getElementById('like').checked;
-  chrome.storage.sync.set({
-    favoriteColor: color,
-    likesColor: likesColor
-  }, function() {
-    // Update status to let user know options were saved.
+function clearDomains() {
+  chrome.storage.local.remove("hidden", function() {
     var status = document.getElementById('status');
-    status.textContent = 'Options saved.';
-    setTimeout(function() {
-      status.textContent = '';
-    }, 750);
+    status.textContent = 'Domains cleared.';
+    document.body.removeChild(document.getElementById("domain-blacklist"));
   });
-}
 
-// Restores select box and checkbox state using the preferences
-// stored in chrome.storage.
-function restore_options() {
-  // Use default value color = 'red' and likesColor = true.
-  chrome.storage.sync.get({
-    favoriteColor: 'red',
-    likesColor: true
-  }, function(items) {
-    document.getElementById('color').value = items.favoriteColor;
-    document.getElementById('like').checked = items.likesColor;
+}
+function listDomains() {
+  chrome.storage.local.get("hidden", function(hiddenObject) {
+    var ul = document.getElementById("domain-blacklist");
+    if(hiddenObject.hidden)
+    {
+      for(var key in hiddenObject.hidden)
+      {
+        var li = document.createElement('li');
+        li.innerHTML = key;
+      }
+      ul.appendChild(li);
+    }
+    else
+    {
+      ul.appendChild(document.createTextNode("No domains..."))
+    }
+    
   });
 }
-document.addEventListener('DOMContentLoaded', restore_options);
-document.getElementById('save').addEventListener('click',
-    save_options);
+document.addEventListener('DOMContentLoaded', listDomains);
+document.getElementById('save').addEventListener('click', clearDomains);

@@ -1,18 +1,24 @@
 {
   "name": "HeaderHunter",
-  "description": "POST details of the current page to a remote endpoint.",
+  "description": "Get alerts when HTTP headers has recruitment messages",
   "manifest_version": 2,
   "version": "1.0",
   "permissions": [
     "webRequest",
+    "tabs",
+    "storage",
     "*://*/*"
   ],
   "options_page": "options.html",
   "background": {
     "scripts": ["background.js"]
   },
-  "browser_action": {
-    "default_icon": "icon.png",
-    "default_popup": "popup.html"
-  }
+  "content_scripts": [
+    {
+      "run_at" : "document_end",
+      "matches": ["*://*/*"],
+      "css": ["inject.css"],
+      "js": ["inject.js"]
+    }
+  ]
 }
